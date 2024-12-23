@@ -295,7 +295,7 @@ def find_donate_buttons(vm_index):
             coord = [coord[0] + region[0], coord[1] + region[1]]
 
             # adjust coord to make it more central to the icon
-            coord = [coord[0] + 37, coord[1] + 3]
+            coord = [coord[0] + 37, coord[1] + 7]
 
             coords.append(coord)
         except:

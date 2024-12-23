@@ -8,12 +8,15 @@ from pyclashbot.memu.pmc import pmc
 from pyclashbot.memu.screenshot import screen_shotter
 
 
-def save_screenshot(vm_index):
-    image_name = f"image{vm_index}.png"
+def save_screenshot(vm_index, image_name = "None"):
+    if image_name == "None":
+        image_name = f"image{vm_index}.png"
+    else:
+        image_name = f"{image_name}.png"
     print(
         pmc.send_adb_command_vm(
             vm_index=vm_index,
-            command=f"exec-out screencap -p /sdcard/pictures/{image_name}",
+            command=f"exec-out screencap -p /sdcard/pictures/Screenshots/{image_name}",
         )
     )
 

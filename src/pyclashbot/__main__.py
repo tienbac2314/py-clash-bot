@@ -70,10 +70,10 @@ def make_job_dictionary(values: dict[str, str | int]) -> dict[str, str | int]:
         "free_offer_user_toggle": values["free_offer_user_toggle"],
         "gold_offer_user_toggle": values["gold_offer_user_toggle"],
         "trophy_road_1v1_battle_user_toggle": values["trophy_road_1v1_user_toggle"],
-        'goblin_queens_journey_1v1_battle_user_toggle': values['goblin_queens_journey_1v1_battle_user_toggle'],
         "path_of_legends_1v1_battle_user_toggle": values[
             "path_of_legends_1v1_user_toggle"
         ],
+        'goblin_queens_journey_1v1_battle_user_toggle': values['goblin_queens_journey_1v1_battle_user_toggle'],
         "2v2_battle_user_toggle": values["2v2_user_toggle"],
         "upgrade_user_toggle": values["card_upgrade_user_toggle"],
         "war_user_toggle": values["war_user_toggle"],
@@ -86,6 +86,7 @@ def make_job_dictionary(values: dict[str, str | int]) -> dict[str, str | int]:
         ],
         "battlepass_collect_user_toggle": values["open_battlepass_user_toggle"],
         "disable_win_track_toggle": values["disable_win_track_toggle"],
+        "spectate_user_toggle": values["spectate_user_toggle"],
         "level_up_chest_user_toggle": values["level_up_chest_user_toggle"],
         "trophy_road_rewards_user_toggle": values["trophy_road_rewards_user_toggle"],
         "upgrade_all_cards_user_toggle": values["upgrade_all_cards_user_toggle"],

@@ -66,7 +66,7 @@ def wait_for_2v2_battle_start(vm_index, logger: Logger) -> Literal["restart", "g
             logger.change_status("Detected an ongoing 2v2 battle!")
             return True
 
-        click(vm_index=vm_index, x_coord=20, y_coord=200)
+        # click(vm_index=vm_index, x_coord=20, y_coord=200)
 
     return False
 
@@ -99,12 +99,12 @@ def wait_for_1v1_battle_start(
             )
             return "restart"
         print("Waiting for 1v1 start")
-        click(vm_index=vm_index, x_coord=200, y_coord=200)
+        # click(vm_index=vm_index, x_coord=200, y_coord=200)
 
     if printmode:
         logger.change_status(status="Done waiting for 1v1 battle to start")
     else:
-        logger.log(message="Done waiting for 1v1 battle to star")
+        logger.log(message="Done waiting for 1v1 battle to start")
     return "good"
 
 
@@ -138,24 +138,67 @@ def check_if_in_battle(vm_index) -> bool:
     """
     iar = screenshot(vm_index)
 
-    # Pixels to check for any type of battle
+    # Pixels to check for any type of battle with their tolerance values
     pixels = [
-        iar[517][56],
-        iar[533][67],
-        iar[616][115],
+        (iar[517][56], 5),
+        (iar[533][67], 5),
+        (iar[616][115], 75),
     ]
 
     # Expected colors for the above pixels
     colors = [
         [255, 255, 255],
         [255, 255, 255],
-        [236, 91, 252],
+        [243, 111, 254],
     ]
 
     # Check if all the pixels match for an ongoing battle
     if all(
-        pixel_is_equal(pixels[index], colors[index], tol=55)
-        for index in range(len(pixels))
+        pixel_is_equal(pixel[0], colors[index], tol=pixel[1])
+        for index, pixel in enumerate(pixels)
+    ):
+        # Specific check for 2v2 battle
+        combat_2v2_pixel = iar[506][135]
+        combat_2v2_color = [169, 29, 172]
+
+        if pixel_is_equal(combat_2v2_pixel, combat_2v2_color, tol=50):
+            # print("It's a 2v2 fight")
+            return "2v2"
+        else:
+            # print("It's a 1v1 fight")
+            return "1v1"
+    else:
+        return "None"
+    
+def check_if_in_battle_with_iar(iar) -> bool:
+    """
+    Checks if the virtual machine is in a 1v1 or 2v2 battle.
+
+    Args:
+        vm_index (int): The index of the virtual machine.
+
+    Returns:
+        str: '2v2' if the battle is in 2v2, '1v1' if the battle is in 1v1, 'None' otherwise.
+    """
+
+    # Pixels to check for any type of battle with their tolerance values
+    pixels = [
+        (iar[517][56], 5),
+        (iar[533][67], 5),
+        (iar[616][115], 75),
+    ]
+
+    # Expected colors for the above pixels
+    colors = [
+        [255, 255, 255],
+        [255, 255, 255],
+        [243, 111, 254],
+    ]
+
+    # Check if all the pixels match for an ongoing battle
+    if all(
+        pixel_is_equal(pixel[0], colors[index], tol=pixel[1])
+        for index, pixel in enumerate(pixels)
     ):
         # Specific check for 2v2 battle
         combat_2v2_pixel = iar[506][135]
@@ -1013,12 +1056,12 @@ def get_to_card_page_from_clash_main(
 
     # change to trophy road
     click(
-        vm_index, 286, 391 
+        vm_index, 317, 400 
     )
     time.sleep(2.5)
 
     click(
-        vm_index, 69, 293
+        vm_index, 375, 405
     )
     time.sleep(2.5)
     
@@ -1212,75 +1255,83 @@ def handle_clash_main_tab_notifications(
         "good" otherwise.
     """
     start_time: float = time.time()
+    
+    while (time.time() - start_time) < 240:
+        # wait for clash main to appear
+        if wait_for_clash_main_menu(vm_index, logger) is False:
+            logger.change_status(
+                status="Error 246246 Waited too long for clash main menu, restarting vm"
+            )
+            return False
 
-    # wait for clash main to appear
-    if wait_for_clash_main_menu(vm_index, logger) is False:
-        logger.change_status(
-            status="Error 246246 Waited too long for clash main menu, restarting vm"
-        )
-        return False
-
-    # click card tab from main
-    print("Clicked card tab")
-    click(vm_index, 103, 598)
-    time.sleep(1)
-
-    # click shop tab from card tab
-    print("Clicked shop tab")
-    click(vm_index, 9, 594, clicks=3, interval=0.33)
-    time.sleep(1)
-
-    # click clan tab from shop tab
-    print("Clicked clan tab")
-    click(vm_index, 315, 594)
-    time.sleep(3)
-
-    if check_for_war_chest_obstruction(vm_index):
-        open_war_chest_obstruction(vm_index, logger)
-        logger.add_war_chest_collect()
-        print(f"Incremented war chest collects to {logger.war_chest_collects}")
-        time.sleep(3)
-
-    # click events tab from clan tab
-    print("Getting to events tab...")
-    while not check_for_events_page(vm_index):
-        print("Still not on events page...")
-
-        click(vm_index, 408, 600)
-
-        handle_war_popup_pages(vm_index, logger)
-
+        # click card tab from main
+        print("Clicked card tab")
+        click(vm_index, 103, 598)
         time.sleep(1)
 
-    print("On events page")
+        # click shop tab from card tab
+        print("Clicked shop tab")
+        click(vm_index, 9, 594, clicks=3, interval=0.33)
+        time.sleep(1)
 
-    # spam click shop page at the leftmost location, wait a little bit
-    print("Clicked shop page")
-    click(vm_index, 9, 594, clicks=3, interval=0.33)
-    time.sleep(2)
+        # click clan tab from shop tab
+        print("Clicked clan tab")
+        click(vm_index, 315, 594)
+        time.sleep(3)
 
-    # click clash main from shop page
-    print("Clicked clash main")
-    click(vm_index, 240, 600)
-    time.sleep(2)
+        if check_for_war_chest_obstruction(vm_index):
+            open_war_chest_obstruction(vm_index, logger)
+            logger.add_war_chest_collect()
+            print(f"Incremented war chest collects to {logger.war_chest_collects}")
+            time.sleep(3)
 
-    # handle possibility of trophy road obstructing clash main
-    if check_for_trophy_reward_menu(vm_index):
-        handle_trophy_reward_menu(vm_index, logger)
+        # click events tab from clan tab
+        print("Getting to events tab...")
+        while not check_for_events_page(vm_index) and (time.time() - start_time) < 240:
+            print("Still not on events page...")
+
+            click(vm_index, 408, 600)
+
+            handle_war_popup_pages(vm_index, logger)
+
+            time.sleep(1)
+
+        if check_for_events_page(vm_index):
+            print("On events page")
+        else:
+            logger.change_status(
+                status="Error 246247 Waited too long for events page, restarting vm"
+            )
+            return False
+
+        # spam click shop page at the leftmost location, wait a little bit
+        print("Clicked shop page")
+        click(vm_index, 9, 594, clicks=3, interval=0.33)
         time.sleep(2)
 
-    # wait for clash main to appear
-    if wait_for_clash_main_menu(vm_index, logger) is False:
+        # click clash main from shop page
+        print("Clicked clash main")
+        click(vm_index, 240, 600)
+        time.sleep(2)
+
+        # handle possibility of trophy road obstructing clash main
+        if check_for_trophy_reward_menu(vm_index):
+            handle_trophy_reward_menu(vm_index, logger)
+            time.sleep(2)
+
+        # wait for clash main to appear
+        if wait_for_clash_main_menu(vm_index, logger) is False:
+            logger.change_status(
+                status="Error 47 Waited too long for clash main menu, restarting vm"
+            )
+            return False
+
         logger.change_status(
-            status="Error 47 Waited too long for clash main menu, restarting vm"
+            status=f"Handled clash main notifications in {str(time.time() - start_time)[:5]}s"
         )
-        return False
 
-    logger.change_status(
-        status=f"Handled clash main notifications in {str(time.time() - start_time)[:5]}s"
-    )
-
-    return True
+        return True
+    return False
 
 
 def check_for_events_page(vm_index):

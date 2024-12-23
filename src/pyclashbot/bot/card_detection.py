@@ -49,8 +49,12 @@ PLAY_COORDS = {
         "right": [(247, 396), (264, 440), (343, 463), (191, 473)],
     },
     "princess": {
-        "left": [(70, 463), (240, 400), (191, 471), (220, 402)],
-        "right": [(343, 463), (184, 398), (211, 473), (166, 394)],
+        "left": [(235, 415), (240, 400), (211, 471), (220, 402)],
+        "right": [(185, 415), (184, 398), (191, 473), (166, 394)],
+    },
+    "suspicious_bush": {
+        "left": [(335, 288)],
+        "right": [(77, 283)],
     },
     "earthquake": {
         "left": [(118, 185)],
@@ -81,8 +85,8 @@ PLAY_COORDS = {
         "right": [(295, 185)],
     },
     "rocket": {
-        "left": [(127, 161)],
-        "right": [(282, 162)],
+        "left": [(118, 180)],
+        "right": [(295, 180)],
     },
     "lightning": {
         "left": [(118, 185)],
@@ -114,6 +118,9 @@ CARD_GROUPS: dict[str, list[str]] = {
     ],
     "princess": [
         "princess",
+    ],
+    "suspicious_bush": [
+        "suspicious_bush",
     ],
     "bigboi":[
         "royal_delivery",
@@ -181,9 +188,11 @@ CARD_GROUPS: dict[str, list[str]] = {
 
 # card color data
 card_color_data = {
+    "valkyrie": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 10, 'Blue': 112, 'Indigo': 284, 'Violet': 1, 'Cyan': 0, 'Magenta': 0, 'Pink': 95, 'Turquoise': 212, 'Lime': 0, 'Purple': 51, 'Brown': 31, 'Teal': 94, 'Maroon': 1}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 7, 'Blue': 65, 'Indigo': 385, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 95, 'Turquoise': 157, 'Lime': 0, 'Purple': 4, 'Brown': 31, 'Teal': 91, 'Maroon': 56}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 8, 'Blue': 19, 'Indigo': 519, 'Violet': 18, 'Cyan': 0, 'Magenta': 29, 'Pink': 21, 'Turquoise': 57, 'Lime': 0, 'Purple': 27, 'Brown': 26, 'Teal': 161, 'Maroon': 6}, {'Red': 0, 'Orange': 5, 'Yellow': 0, 'Green': 35, 'Blue': 39, 'Indigo': 203, 'Violet': 17, 'Cyan': 0, 'Magenta': 44, 'Pink': 118, 'Turquoise': 269, 'Lime': 0, 'Purple': 6, 'Brown': 6, 'Teal': 146, 'Maroon': 3}],
+    "suspicious_bush": [{'Red': 0, 'Orange': 98, 'Yellow': 0, 'Green': 20, 'Blue': 0, 'Indigo': 83, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 277, 'Turquoise': 29, 'Lime': 0, 'Purple': 0, 'Brown': 328, 'Teal': 53, 'Maroon': 3}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 8, 'Blue': 0, 'Indigo': 12, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 152, 'Turquoise': 37, 'Lime': 0, 'Purple': 1, 'Brown': 288, 'Teal': 34, 'Maroon': 359}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 434, 'Blue': 0, 'Indigo': 28, 'Violet': 12, 'Cyan': 0, 'Magenta': 25, 'Pink': 82, 'Turquoise': 111, 'Lime': 0, 'Purple': 7, 'Brown': 51, 'Teal': 131, 'Maroon': 10}, {'Red': 1, 'Orange': 0, 'Yellow': 0, 'Green': 272, 'Blue': 0, 'Indigo': 26, 'Violet': 3, 'Cyan': 0, 'Magenta': 41, 'Pink': 77, 'Turquoise': 228, 'Lime': 2, 'Purple': 15, 'Brown': 36, 'Teal': 146, 'Maroon': 44}],
     "evo_goblin_barrel": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 94, 'Blue': 0, 'Indigo': 41, 'Violet': 21, 'Cyan': 0, 'Magenta': 54, 'Pink': 210, 'Turquoise': 212, 'Lime': 2, 'Purple': 33, 'Brown': 9, 'Teal': 204, 'Maroon': 11}, {'Red': 0, 'Orange': 2, 'Yellow': 0, 'Green': 46, 'Blue': 0, 'Indigo': 12, 'Violet': 42, 'Cyan': 0, 'Magenta': 0, 'Pink': 319, 'Turquoise': 133, 'Lime': 9, 'Purple': 118, 'Brown': 45, 'Teal': 160, 'Maroon': 5}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 41, 'Blue': 0, 'Indigo': 128, 'Violet': 22, 'Cyan': 0, 'Magenta': 36, 'Pink': 248, 'Turquoise': 114, 'Lime': 24, 'Purple': 36, 'Brown': 39, 'Teal': 189, 'Maroon': 14}, {'Red': 0, 'Orange': 11, 'Yellow': 0, 'Green': 7, 'Blue': 0, 'Indigo': 54, 'Violet': 24, 'Cyan': 0, 'Magenta': 45, 'Pink': 138, 'Turquoise': 283, 'Lime': 0, 'Purple': 24, 'Brown': 44, 'Teal': 253, 'Maroon': 8}],
     "evo_battle_ram": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 91, 'Blue': 0, 'Indigo': 238, 'Violet': 30, 'Cyan': 0, 'Magenta': 0, 'Pink': 195, 'Turquoise': 10, 'Lime': 3, 'Purple': 177, 'Brown': 10, 'Teal': 63, 'Maroon': 74}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 23, 'Blue': 0, 'Indigo': 147, 'Violet': 9, 'Cyan': 0, 'Magenta': 7, 'Pink': 476, 'Turquoise': 19, 'Lime': 0, 'Purple': 155, 'Brown': 7, 'Teal': 32, 'Maroon': 16}, {'Red': 0, 'Orange': 0, 'Yellow': 1, 'Green': 109, 'Blue': 0, 'Indigo': 227, 'Violet': 46, 'Cyan': 0, 'Magenta': 22, 'Pink': 106, 'Turquoise': 52, 'Lime': 3, 'Purple': 37, 'Brown': 3, 'Teal': 204, 'Maroon': 81}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 38, 'Blue': 0, 'Indigo': 175, 'Violet': 33, 'Cyan': 0, 'Magenta': 72, 'Pink': 312, 'Turquoise': 67, 'Lime': 1, 'Purple': 89, 'Brown': 31, 'Teal': 71, 'Maroon': 2}],
-    "evo_fire_cracker": [{'Red': 0, 'Orange': 23, 'Yellow': 0, 'Green': 1, 'Blue': 0, 'Indigo': 99, 'Violet': 65, 'Cyan': 0, 'Magenta': 31, 'Pink': 269, 'Turquoise': 224, 'Lime': 0, 'Purple': 1, 'Brown': 84, 'Teal': 78, 'Maroon': 16}, {'Red': 0, 'Orange': 0, 'Yellow': 2, 'Green': 7, 'Blue': 0, 'Indigo': 100, 'Violet': 78, 'Cyan': 0, 'Magenta': 61, 'Pink': 365, 'Turquoise': 112, 'Lime': 0, 'Purple': 8, 'Brown': 70, 'Teal': 78, 'Maroon': 10}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 0, 'Blue': 0, 'Indigo': 203, 'Violet': 59, 'Cyan': 0, 'Magenta': 41, 'Pink': 41, 'Turquoise': 48, 'Lime': 0, 'Purple': 48, 'Brown': 43, 'Teal': 137, 'Maroon': 271}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 20, 'Blue': 0, 'Indigo': 312, 'Violet': 53, 'Cyan': 0, 'Magenta': 67, 'Pink': 97, 'Turquoise': 85, 'Lime': 0, 'Purple': 76, 'Brown': 57, 'Teal': 40, 'Maroon': 84}],
+    "evo_fire_cracker": [{'Red': 0, 'Orange': 44, 'Yellow': 0, 'Green': 2, 'Blue': 0, 'Indigo': 115, 'Violet': 59, 'Cyan': 0, 'Magenta': 11, 'Pink': 109, 'Turquoise': 267, 'Lime': 0, 'Purple': 2, 'Brown': 157, 'Teal': 93, 'Maroon': 32}, {'Red': 0, 'Orange': 47, 'Yellow': 1, 'Green': 8, 'Blue': 0, 'Indigo': 103, 'Violet': 92, 'Cyan': 0, 'Magenta': 31, 'Pink': 249, 'Turquoise': 125, 'Lime': 0, 'Purple': 16, 'Brown': 123, 'Teal': 76, 'Maroon': 20}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 0, 'Blue': 0, 'Indigo': 236, 'Violet': 47, 'Cyan': 0, 'Magenta': 35, 'Pink': 13, 'Turquoise': 52, 'Lime': 0, 'Purple': 21, 'Brown': 32, 'Teal': 152, 'Maroon': 303}, {'Red': 0, 'Orange': 1, 'Yellow': 0, 'Green': 30, 'Blue': 0, 'Indigo': 337, 'Violet': 42, 'Cyan': 0, 'Magenta': 46, 'Pink': 62, 'Turquoise': 92, 'Lime': 0, 'Purple': 37, 'Brown': 73, 'Teal': 41, 'Maroon': 130}],
     "mighty_miner": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 1, 'Blue': 16, 'Indigo': 170, 'Violet': 3, 'Cyan': 0, 'Magenta': 0, 'Pink': 73, 'Turquoise': 360, 'Lime': 0, 'Purple': 35, 'Brown': 179, 'Teal': 54, 'Maroon': 0}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 7, 'Blue': 12, 'Indigo': 209, 'Violet': 0, 'Cyan': 13, 'Magenta': 0, 'Pink': 161, 'Turquoise': 183, 'Lime': 0, 'Purple': 65, 'Brown': 166, 'Teal': 70, 'Maroon': 5}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 1, 'Blue': 30, 'Indigo': 301, 'Violet': 16, 'Cyan': 0, 'Magenta': 21, 'Pink': 105, 'Turquoise': 148, 'Lime': 0, 'Purple': 17, 'Brown': 118, 'Teal': 130, 'Maroon': 4}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 0, 'Blue': 26, 'Indigo': 81, 'Violet': 11, 'Cyan': 0, 'Magenta': 37, 'Pink': 88, 'Turquoise': 297, 'Lime': 0, 'Purple': 12, 'Brown': 186, 'Teal': 28, 'Maroon': 125}],
     "mega_knight": [{'Red': 0, 'Orange': 0, 'Yellow': 1, 'Green': 39, 'Blue': 0, 'Indigo': 208, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 191, 'Turquoise': 31, 'Lime': 0, 'Purple': 1, 'Brown': 306, 'Teal': 10, 'Maroon': 104}, {'Red': 0, 'Orange': 1, 'Yellow': 0, 'Green': 29, 'Blue': 0, 'Indigo': 163, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 253, 'Turquoise': 17, 'Lime': 0, 'Purple': 2, 'Brown': 162, 'Teal': 3, 'Maroon': 261}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 25, 'Blue': 0, 'Indigo': 139, 'Violet': 6, 'Cyan': 0, 'Magenta': 23, 'Pink': 138, 'Turquoise': 3, 'Lime': 0, 'Purple': 13, 'Brown': 273, 'Teal': 0, 'Maroon': 271}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 5, 'Blue': 0, 'Indigo': 63, 'Violet': 3, 'Cyan': 0, 'Magenta': 39, 'Pink': 454, 'Turquoise': 0, 'Lime': 0, 'Purple': 11, 'Brown': 235, 'Teal': 0, 'Maroon': 81}],
     "bowler": [{'Red': 0, 'Orange': 1, 'Yellow': 0, 'Green': 2, 'Blue': 0, 'Indigo': 2, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 570, 'Turquoise': 1, 'Lime': 0, 'Purple': 19, 'Brown': 284, 'Teal': 0, 'Maroon': 12}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 2, 'Blue': 0, 'Indigo': 2, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 787, 'Turquoise': 10, 'Lime': 0, 'Purple': 0, 'Brown': 70, 'Teal': 1, 'Maroon': 19}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 0, 'Blue': 0, 'Indigo': 20, 'Violet': 10, 'Cyan': 0, 'Magenta': 19, 'Pink': 575, 'Turquoise': 1, 'Lime': 0, 'Purple': 9, 'Brown': 238, 'Teal': 0, 'Maroon': 19}, {'Red': 0, 'Orange': 9, 'Yellow': 0, 'Green': 2, 'Blue': 0, 'Indigo': 27, 'Violet': 1, 'Cyan': 0, 'Magenta': 40, 'Pink': 364, 'Turquoise': 5, 'Lime': 0, 'Purple': 31, 'Brown': 381, 'Teal': 2, 'Maroon': 29}],
@@ -2718,6 +2727,28 @@ card_color_data = {
     "void": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 2, 'Blue': 42, 'Indigo': 676, 'Violet': 13, 'Cyan': 1, 'Magenta': 0, 'Pink': 49, 'Turquoise': 19, 'Lime': 0, 'Purple': 30, 'Brown': 1, 'Teal': 3, 'Maroon': 55}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 3, 'Blue': 90, 'Indigo': 465, 'Violet': 3, 'Cyan': 1, 'Magenta': 0, 'Pink': 89, 'Turquoise': 118, 'Lime': 0, 'Purple': 63, 'Brown': 0, 'Teal': 6, 'Maroon': 53}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 0, 'Blue': 84, 'Indigo': 621, 'Violet': 27, 'Cyan': 38, 'Magenta': 16, 'Pink': 21, 'Turquoise': 21, 'Lime': 0, 'Purple': 45, 'Brown': 1, 'Teal': 9, 'Maroon': 8}, {'Red': 1, 'Orange': 0, 'Yellow': 0, 'Green': 1, 'Blue': 87, 'Indigo': 456, 'Violet': 35, 'Cyan': 45, 'Magenta': 38, 'Pink': 45, 'Turquoise': 102, 'Lime': 0, 'Purple': 77, 'Brown': 0, 'Teal': 2, 'Maroon': 2}],
 }
 
+DAMAGE_SPELL = {
+    "zap", 
+    "lightning", 
+    "poison", 
+    "rocket", 
+    "rage", 
+    "gob_curse", 
+    "void", 
+    "snowball", 
+    "tornado", 
+    "fireball", 
+    "arrows", 
+    "freeze", 
+    "earthquake"
+}
+
+LIMITED_DAMAGE_SPELL = {
+    "log", 
+    "barb_barrel",
+    "royal_delivery"
+}
+
 # card image stuff
 
 toplefts = [
@@ -2840,22 +2871,30 @@ card_toplefts = numpy.array([
 # Pre-calculate x_coords and y_coords for each card
 card_coords = [(numpy.arange(topleft[0], topleft[0] + 20), numpy.arange(topleft[1], topleft[1] + 20)) for topleft in card_toplefts]
 
-global play_side
-global battle_iar
-
 play_side = "left"
+action_offset = -1
+enemy_presence = False
+battle_iar = None
 
-def check_which_cards_are_available(vm_index, check_champion = False, check_side = False):
+def check_which_cards_are_available(vm_index, check_champion = False, check_side = False, new_screenshot = False):
     global battle_iar
-    battle_iar = screenshot(vm_index)
+    if new_screenshot:
+        battle_iar = screenshot(vm_index)
+    else:
+        from pyclashbot.bot.do_fight_state import battle_iar as imported_battle_iar
+        battle_iar = imported_battle_iar
+    global play_side
+    global action_offset
+    global enemy_presence
+    
     card_exists_list = []
 
-    if (check_champion and (check_for_champion_ability(battle_iar[462][324], battle_iar[453][334], battle_iar[462][336]))):
-            click(vm_index, 330, 460)
-    
     if check_side:
-        global play_side
-        _, play_side = switch_side()
+        action_offset, play_side, enemy_presence = switch_side()
+
+    if check_champion:
+        if (enemy_presence and action_offset > 29000 and (check_for_champion_ability(battle_iar[462][324], battle_iar[453][334], battle_iar[462][336]))):
+            click(vm_index, 330, 460)
 
     for i, coords in enumerate(card_coords):
         x_coords, y_coords = coords
@@ -2884,6 +2923,19 @@ def check_for_champion_ability(a, b, c):
 def identify_hand_cards(vm_index, card_index):
     color_chosen_card = get_all_pixel_data(vm_index, card_index)
     return find_closest_card(color_chosen_card)
+
+def check_if_can_play_spell(name: str):
+    from pyclashbot.bot.do_fight_state import elapsed_time
+    global enemy_presence
+    if name in DAMAGE_SPELL:
+        if elapsed_time > 120:
+            return True
+        elif enemy_presence:
+            return True
+    elif name in LIMITED_DAMAGE_SPELL:
+        return False
+        
+    return False
 
 # Create the reverse lookup dictionary
 CARD_TO_GROUP = {card: group for group, cards in CARD_GROUPS.items() for card in cards}
@@ -2935,29 +2987,122 @@ def calculate_play_coords(card_grouping: str, side_preference: str):
             return random.choice(group_datum["coords"])
 
 
+# def calculate_play_coords_spell(name: str):
+#     if name in DAMAGE_SPELL:
+        
+#     if name in LIMITED_DAMAGE_SPELL:
+        
+#     return 0
+
 
 bridge_iar = 0
+
 def create_default_bridge_iar(vm_index):
     global bridge_iar
     bridge_iar = screenshot(vm_index)
 
 bridge_pixel = [
-        [100, 200],
-        [275, 200]  
-    ]
+    [60, 70],
+    [242, 70]
+]
+
+enemy_tower_coords = [
+    [85, 80, 60, 75],
+    [272, 80, 60, 75]
+]
+
+tower_coords = [
+    [86, 355, 57, 62],
+    [270, 355, 57, 62]
+]
 
 def switch_side():
     bridge_color_offset = []
+    enemy_presence = [False, False]
+    enemy_color = [32, 0, 108]
+    enemy_heath_bar_color = [94, 38, 226]
+
     for i, bridge in enumerate(bridge_pixel):
-        all_coords = [(y, x) for x in range(bridge[0], bridge[0] + 40) for y in range(bridge[1], bridge[1] + 175)]
-        pixel_coords = numpy.array(all_coords)
+        # Create a mask for the scanning area
+        mask = numpy.ones((410, 115), dtype=bool)
+
+        # Define the exclusion area
+        exclude_start_x = enemy_tower_coords[i][0] - bridge[0]
+        exclude_start_y = enemy_tower_coords[i][1] - bridge[1]
+        exclude_end_x = exclude_start_x + enemy_tower_coords[i][2]
+        exclude_end_y = exclude_start_y + enemy_tower_coords[i][3]
+
+        # Set the mask to False for the exclusion area
+        mask[exclude_start_y:exclude_end_y, exclude_start_x:exclude_end_x] = False
+
+         # Define the additional exclusion area
+        add_exclude_start_x = tower_coords[i][0] - bridge[0]
+        add_exclude_start_y = tower_coords[i][1] - bridge[1]
+        add_exclude_end_x = add_exclude_start_x + tower_coords[i][2]
+        add_exclude_end_y = add_exclude_start_y + tower_coords[i][3]
+
+        # Set the mask to False for the additional exclusion area
+        mask[add_exclude_start_y:add_exclude_end_y, add_exclude_start_x:add_exclude_end_x] = False
+
+        # Get the coordinates to scan
+        scan_coords = numpy.argwhere(mask)
+
+        # Adjust coordinates to the original image
+        scan_coords[:, 0] += bridge[1]
+        scan_coords[:, 1] += bridge[0]
+
+        pixel_coords = numpy.array(scan_coords)
         iar_pixels = battle_iar[pixel_coords[:, 0], pixel_coords[:, 1]]
         bridge_iar_pixels = bridge_iar[pixel_coords[:, 0], pixel_coords[:, 1]]
         bridge_color_offset.append(numpy.linalg.norm(iar_pixels - bridge_iar_pixels))
 
-    if bridge_color_offset[0] > bridge_color_offset[1]:
-        return bridge_color_offset[0], "left"
-    return bridge_color_offset[1], "right"
+        # Calculate the absolute difference for each color channel for all pixels
+        color_diff = numpy.abs(battle_iar[pixel_coords[:, 0], pixel_coords[:, 1]] - enemy_heath_bar_color)
+
+        # Check if the color difference for all channels is less than or equal to 50 for any pixel
+        matching_pixels = numpy.all(color_diff <= 5, axis=1)
+        if numpy.any(matching_pixels):
+            for coord in pixel_coords[matching_pixels]:
+                # Scan 15 pixels to the right
+                right_coords = [(coord[0], coord[1] + offset) for offset in range(1, 16)]
+                valid_pixels = 0
+
+                for right_coord in right_coords:
+                    if 0 <= right_coord[1] < battle_iar.shape[1]:  # Ensure the coordinate is within bounds
+                        right_diff = numpy.abs(battle_iar[right_coord[0], right_coord[1]] - enemy_heath_bar_color)
+                        if numpy.all(right_diff <= 5):
+                            valid_pixels += 1
+
+                if valid_pixels >= 8:
+                    if coord[0] > 240: # If enemies are on our side
+                        if i == 0:
+                            return 34000, "left", True
+                        elif i == 1:
+                            return 34000, "right", True
+
+        # Check if the color difference for all channels is less than or equal to 5 for any pixel
+        if numpy.any(matching_pixels):
+            enemy_presence[i] = True
+
+    # print(bridge_color_offset, enemy_presence)
+    if (enemy_presence[0] and enemy_presence[1]) or (not enemy_presence[0] and not enemy_presence[1]):
+        # Compare normally if both sides have enemy presence or both don't
+        if bridge_color_offset[0] > bridge_color_offset[1]:
+            return bridge_color_offset[0], "left", enemy_presence[0]
+        else:
+            return bridge_color_offset[1], "right", enemy_presence[1]
+    elif enemy_presence[0]:
+        # Choose left if left has enemy presence and right is not significantly higher
+        if bridge_color_offset[1] <= bridge_color_offset[0] + 10000:
+            return bridge_color_offset[0], "left", enemy_presence[0]
+        else:
+            return bridge_color_offset[1], "right", enemy_presence[1]
+    else:
+        # Choose right if right has enemy presence and left is not significantly higher
+        if bridge_color_offset[0] <= bridge_color_offset[1] + 10000:
+            return bridge_color_offset[1], "right", enemy_presence[1]
+        else:
+            return bridge_color_offset[0], "left", enemy_presence[0]
 
 
 if __name__ == "__main__":

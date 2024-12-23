@@ -56,13 +56,6 @@ battle_tab = (
             default_value=False,
         ),
     ],
-    [
-        job_check_box(
-            "Goblin Queen's Journey battles",
-            "goblin_queens_journey_1v1_battle_user_toggle",
-            default_value=False,
-        ),
-    ],
 
     [
         job_check_box(
@@ -71,6 +64,15 @@ battle_tab = (
             default_value=False,
         ),
     ],
+
+    [
+        job_check_box(
+            "Classic 1v1 battles",
+            "goblin_queens_journey_1v1_battle_user_toggle",
+            default_value=False,
+        ),
+    ],
+    
     [
         job_check_box("2v2 battles", "2v2_user_toggle", default_value=True),
     ],
@@ -94,6 +96,9 @@ battle_tab = (
             "skip_fight_if_full_chests_user_toggle",
             default_value=False,
         ),
+    ],
+    [
+        job_check_box("Spectate ", "spectate_user_toggle", default_value=False),
     ],
 )
 

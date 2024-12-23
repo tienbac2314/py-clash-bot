@@ -14,11 +14,11 @@ from pyclashbot.bot.card_detection import (
     create_default_bridge_iar,
     get_play_coords_for_card,
     check_which_cards_are_available,
-    switch_side,
 )
 from pyclashbot.bot.nav import (
     check_for_trophy_reward_menu,
     check_if_in_battle,
+    check_if_in_battle_with_iar,
     check_for_in_battle_with_delay,
     check_if_on_clash_main_menu,
     get_to_activity_log,
@@ -115,7 +115,7 @@ def do_2v2_fight_state(
         logger.log("Error 655 Failuring in 2v2 random fight loop")
         return "restart"
 
-    time.sleep(10)
+    time.sleep(3)
 
     return next_state
 
@@ -163,7 +163,7 @@ def do_1v1_fight_state(
             logger.increment_trophy_road_fights()
         elif fight_mode_choosed == "path_of_legends":
             logger.increment_path_of_legends_fights()
-    time.sleep(10)
+    time.sleep(3)
     return next_state
 
 
@@ -282,8 +282,8 @@ def set_fight_mode(vm_index, fight_mode):
     time.sleep(2)
 
     mode2coord = {
-        "trophy_road": (194, 288),
-        "path_of_legends": (192, 535),
+        "trophy_road": (375, 405),
+        "path_of_legends": (375, 541),
         "goblin_queen": (199, 403),
         "queens_journey": (199, 403),
     }
@@ -330,8 +330,47 @@ def start_fight(vm_index, logger, mode):
     do_job_incrementing(logger, mode)
     if mode == "2v2":
         return start_2v2_fight(vm_index, logger)
+    elif mode == "queens_journey":
+        return start_classic_1v1_fight(vm_index, logger)
     else:
         return start_1v1_type_fight(vm_index, mode)
+
+def start_classic_1v1_fight(vm_index, logger: Logger) -> Boolean:
+    """method to handle starting a 1v1 fight"""
+
+    logger.change_status(status="Start fight state")
+    logger.change_status(status="Starting 1v1 mode")
+
+    # get to challenges tab
+    if get_to_challenges_tab_from_main(vm_index, logger) == "restart":
+        return False
+
+    # check for then close popup
+    if check_for_challenge_page_on_events_tab(vm_index):
+        close_this_challenge_page(vm_index)
+        for _ in range(10):
+            scroll_up_on_left_side_of_screen(vm_index)
+        time.sleep(1)
+
+    # scroll up
+    for _ in range(3):
+        scroll_up_on_left_side_of_screen(vm_index)
+    time.sleep(1)
+
+    # if there is a locked events page, return restart
+    if check_for_locked_events_page(vm_index):
+        logger.change_status("Locked events page!")
+        return False
+
+    # click 1v1 icon location
+    click(vm_index, 87, 490)
+    time.sleep(0.41)
+
+    # click battle button
+    click(vm_index, 222, 433)
+    time.sleep(0.3)
+
+    return True
 
 
 def start_2v2_fight(vm_index, logger: Logger) -> Boolean:
@@ -452,6 +491,7 @@ def click_quickmatch_button(vm_index) -> None:
 
     click(vm_index, QUICKMATCH_BUTTON_COORD[0], QUICKMATCH_BUTTON_COORD[1])
 
+
 def emote_in_2v2(vm_index, logger: Logger) -> Literal["good"]:
     """method to do an emote in a 2v2 match"""
 
@@ -487,6 +527,7 @@ def mag_dump(vm_index, logger):
         click(vm_index, play_coord[0], play_coord[1])
         time.sleep(0.1)
 
+
 def wait_for_elixer(
     vm_index, logger, random_elixer_wait, WAIT_THRESHOLD = 5000, PLAY_THRESHOLD = 10000
 ) -> Boolean | Literal["restart"] | Literal["no battle"]:
@@ -495,28 +536,37 @@ def wait_for_elixer(
     start_time = time.time()
 
     while not count_elixer(vm_index, random_elixer_wait):
+        global battle_iar
         wait_time = time.time() - start_time
         logger.change_status(
             f"Waiting for {random_elixer_wait} elixer for {str(wait_time)[:4]}s..."
         )
 
-        card_inhand = len(check_which_cards_are_available(vm_index, True, False))
-        action_offset, _ = switch_side()
-        if action_offset > PLAY_THRESHOLD and card_inhand > 0:
-            logger.change_status("Too much going on, playing now")
-            return True
+        card_inhand = len(check_which_cards_are_available(vm_index, True, True, False))
+        from pyclashbot.bot.card_detection import (
+            action_offset,
+            enemy_presence,
+            # play_side,
+        )
+        # logger.change_status(f"Action offset: {action_offset}, enemy presence: {enemy_presence}, play side: {play_side}")
         
-        if action_offset > WAIT_THRESHOLD and card_inhand == 4:
-            logger.change_status("All cards are available!")
-            return True
+        if action_offset < 40000:
+            if card_inhand > 0 and ((not enemy_presence and action_offset > PLAY_THRESHOLD) or (enemy_presence and action_offset > PLAY_THRESHOLD - 8000)):
+                logger.change_status("Too much going on, playing now")
+                return True
+            
+            if card_inhand == 4 and action_offset > WAIT_THRESHOLD:
+                logger.change_status("All cards are available!")
+                return True
 
         if wait_time > ELIXER_WAIT_TIMEOUT:
             logger.change_status(status="Waited too long for elixer")
             return "restart"
-
-        if not check_for_in_battle_with_delay(vm_index):
-            logger.change_status(status="Not in battle, stopping waiting for elixer.")
-            return "no battle"
+        
+        if check_if_in_battle_with_iar(battle_iar) == "None":
+            if check_if_in_battle(vm_index) == "None":
+                logger.change_status(status="Not in battle, stopping waiting for elixer.")
+                return "no battle"
 
     logger.change_status(
         f"Took {str(time.time() - start_time)[:4]}s for {random_elixer_wait} elixer."
@@ -541,9 +591,10 @@ elixer_color = [240, 137, 244]
 
 def count_elixer(vm_index, elixer_count) -> bool:
     """method to check for 4 elixer during a battle"""
-    iar = screenshot(vm_index)
+    global battle_iar
+    battle_iar = screenshot(vm_index)
 
-    if pixel_is_equal(iar[elixer_coords[elixer_count - 1][0], elixer_coords[elixer_count - 1][1]], elixer_color, tol=65):
+    if pixel_is_equal(battle_iar[elixer_coords[elixer_count - 1][0], elixer_coords[elixer_count - 1][1]], elixer_color, tol=65):
         return True
     return False
 
@@ -703,8 +754,7 @@ def find_ok_battle_button(vm_index):
     return [coord[1], coord[0]]
 
 
-def get_to_main_after_fight(vm_index, logger):
-    timeout = 120  # s
+def get_to_main_after_fight(vm_index, logger, timeout = 120):
     start_time = time.time()
     clicked_ok_or_exit = False
 
@@ -789,7 +839,7 @@ def play_a_card(vm_index, logger) -> Boolean:
     # check which cards are available
     logger.change_status("Looking at which cards are available")
     available_card_check_start_time = time.time()
-    card_indicies = check_which_cards_are_available(vm_index, False, True)
+    card_indicies = check_which_cards_are_available(vm_index, False, True, True)
     
     if not card_indicies:
         logger.change_status("No cards ready yet...")
@@ -836,36 +886,48 @@ def play_a_card(vm_index, logger) -> Boolean:
         emote_in_2v2(vm_index, logger)
     return True
 
+battle_iar = None
+in_battle = True
 elixer_count = [3, 4, 5, 6, 7, 8, 9]
-percentage_first_5 = [0, 0, 0, 0, 0.3, 0.3, 0.4]
-percentage_single = [0.05, 0.05, 0.1, 0.15, 0.15, 0.3, 0.2]
-percentage_double = [0.05, 0.05, 0.1, 0.15, 0.25, 0.3, 0.1]
-percentage_triple = [0.05, 0.05, 0.1, 0.1, 0.3, 0.4, 0]
+percentage_first_5 = [0, 0, 0, 0, 0.3, 0.4, 0.3]
+percentage_single = [0, 0, 0, 0, 0.2, 0.7, 0.2]
+percentage_double = [0, 0, 0, 0, 0.3, 0.6, 0.1]
+percentage_triple = [0, 0, 0, 0, 0.6, 0.4, 0]
 global elapsed_time
 def _2v2_fight_loop(vm_index: int, logger: Logger):
-    create_default_bridge_iar(vm_index)
+    global in_battle
+    global battle_iar
+    global last_three_cards
+
+    in_battle = True
     last_three_cards = collections.deque(maxlen=3)
     ingame_time = time.time()
     prev_cards_played = logger.get_cards_played()
-    while check_for_in_battle_with_delay(vm_index):
+
+    time.sleep(0.75)
+    create_default_bridge_iar(vm_index)
+    from pyclashbot.bot.card_detection import bridge_iar
+    battle_iar = bridge_iar
+
+    while in_battle:
         global elapsed_time
         elapsed_time = time.time() - ingame_time
         if elapsed_time < 7:  # Less than 5 seconds
             percentage = percentage_first_5
-            WAIT_THRESHOLD = 6000
-            PLAY_THRESHOLD = 10000
+            WAIT_THRESHOLD = 31000
+            PLAY_THRESHOLD = 31000
         elif elapsed_time < 90:  # Less than 2 minutes
             percentage = percentage_single
-            WAIT_THRESHOLD = 6000
-            PLAY_THRESHOLD = 10000
+            WAIT_THRESHOLD = 31000
+            PLAY_THRESHOLD = 31000
         elif elapsed_time < 200:  # Less than 4 minutes
             percentage = percentage_double
-            WAIT_THRESHOLD = 7000
-            PLAY_THRESHOLD = 11000
+            WAIT_THRESHOLD = 32000
+            PLAY_THRESHOLD = 32000
         else:  # 4 minutes or more
             percentage = percentage_triple
-            WAIT_THRESHOLD = 8000
-            PLAY_THRESHOLD = 12000
+            WAIT_THRESHOLD = 33000
+            PLAY_THRESHOLD = 33000
 
         wait_output = wait_for_elixer(vm_index, logger, random.choices(elixer_count, weights = percentage, k=1)[0], WAIT_THRESHOLD, PLAY_THRESHOLD)
         
@@ -873,7 +935,8 @@ def _2v2_fight_loop(vm_index: int, logger: Logger):
             logger.change_status("Failure while waiting for elixer")
             return "restart"
 
-        if wait_output == "no battle" or not check_if_in_battle(vm_index):
+        if wait_output == "no battle":
+            # or not check_if_in_battle(vm_index):
             logger.change_status("Not in a 2v2 battle anymore!")
             break
 
@@ -891,32 +954,41 @@ def _2v2_fight_loop(vm_index: int, logger: Logger):
 
     return "good"
 
-
 def _1v1_fight_loop(vm_index, logger: Logger) -> Literal["restart", "good"]:
     """method for handling dynamicly timed 1v1 fight"""
-    create_default_bridge_iar(vm_index)
+    global in_battle
+    global battle_iar
+    global last_three_cards
+
+    in_battle = True
     last_three_cards = collections.deque(maxlen=3)
     ingame_time = time.time()
     prev_cards_played = logger.get_cards_played()
-    while check_for_in_battle_with_delay(vm_index):
+
+    time.sleep(0.75)
+    create_default_bridge_iar(vm_index)
+    from pyclashbot.bot.card_detection import bridge_iar
+    battle_iar = bridge_iar
+
+    while in_battle:
         global elapsed_time
         elapsed_time = time.time() - ingame_time
         if elapsed_time < 7:  # Less than 5 seconds
             percentage = percentage_first_5
-            WAIT_THRESHOLD = 6000
-            PLAY_THRESHOLD = 9000
+            WAIT_THRESHOLD = 26000
+            PLAY_THRESHOLD = 26000
         elif elapsed_time < 90:  # Less than 2 minutes
             percentage = percentage_single
-            WAIT_THRESHOLD = 6000
-            PLAY_THRESHOLD = 9000
+            WAIT_THRESHOLD = 27000
+            PLAY_THRESHOLD = 27000
         elif elapsed_time < 200:  # Less than 4 minutes
             percentage = percentage_double
-            WAIT_THRESHOLD = 7000
-            PLAY_THRESHOLD = 10000
+            WAIT_THRESHOLD = 28000
+            PLAY_THRESHOLD = 28000
         else:  # 4 minutes or more
             percentage = percentage_triple
-            WAIT_THRESHOLD = 8000
-            PLAY_THRESHOLD = 11000
+            WAIT_THRESHOLD = 29000
+            PLAY_THRESHOLD = 29000
 
         wait_output = wait_for_elixer(vm_index, logger, random.choices(elixer_count, weights = percentage, k=1)[0], WAIT_THRESHOLD, PLAY_THRESHOLD)
         
@@ -928,9 +1000,9 @@ def _1v1_fight_loop(vm_index, logger: Logger) -> Literal["restart", "good"]:
             logger.change_status("Not in a 1v1 battle anymore!")
             break
 
-        if not check_if_in_battle(vm_index):
-            "Not in a battle anymore"
-            break
+        # if not check_if_in_battle(vm_index):
+        #     "Not in a battle anymore"
+        #     break
 
         # print("playing a card in 1v1...")
         play_start_time = time.time()
@@ -993,6 +1065,58 @@ def _1v1_random_fight_loop(vm_index, logger):
     logger.change_status("Finished with 1v1 battle with random plays...")
     return "good"
 
+def spectate_state(
+    vm_index, logger: Logger, next_state
+):
+    """method to spectate a fight"""
+    logger.change_status("Get to social tab")
+    click(vm_index, 293, 70)
+    time.sleep(1)
+    click(vm_index, 146, 110) # click friend tab
+
+    logger.change_status("Waiting for spectate button to appear")
+    clicked = False
+    while 1:
+        logger.change_status("Checking for spectate button...")
+        if check_line_for_color(vm_index, x_1=54, y_1=182, x_2=90, y_2=217, color=(226, 5, 21)):
+            logger.change_status("Found and clicked spectate button!")
+            click(vm_index, 72, 200)
+            clicked = True
+        if clicked:
+            if (check_if_in_spectate_tab(vm_index) and check_line_for_color(vm_index, x_1=54, y_1=182, x_2=90, y_2=217, color=(226, 5, 21))):
+                clicked = False
+            else:
+                break
+
+    logger.change_status("Spectating a fight...")
+    # get to clash main after this fight
+    logger.log("Getting to clash main after doing a fight")
+    if get_to_main_after_fight(vm_index, logger, 360) is False:
+        logger.log("Erro 69a3d69 Failed to get to clash main after spectating")
+        return "restart"
+
+    logger.log("Made it to clash main after doing a fight")
+    time.sleep(3)
+
+    return next_state
+
+def check_if_in_spectate_tab(vm_index):
+    folder = "spectate_tab"
+
+    names = make_reference_image_list(get_file_count(folder))
+    locations: list[list[int] | None] = find_references(
+        screenshot(vm_index),
+        folder,
+        names,
+        tolerance=0.9,
+    )
+
+    coord = get_first_location(locations)
+
+    if coord is None:
+        return False
+
+    return True
 
 def fight_image_save_debug(vm_index,fights = 2):
     logger = Logger()

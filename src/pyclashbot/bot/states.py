@@ -1,5 +1,6 @@
 """time module for timing functions and controling pacing"""
 
+from datetime import datetime
 import time
 from pyclashbot.bot.account_switching import switch_accounts
 from pyclashbot.bot.bannerbox import collect_bannerbox_rewards_state
@@ -11,6 +12,7 @@ from pyclashbot.bot.do_fight_state import (
     do_2v2_fight_state,
     end_fight_state,
     start_fight,
+    spectate_state,
 )
 from pyclashbot.bot.level_up_chest import collect_level_up_chest_state
 from pyclashbot.bot.nav import check_if_on_clash_main_menu, check_if_in_battle_at_start
@@ -28,13 +30,14 @@ from pyclashbot.memu.launcher import (
 )
 from pyclashbot.bot.buy_shop_offers import buy_shop_offers_state
 from pyclashbot.utils.logger import Logger
-from pyclashbot.bot.daily_challenge_collection import collect_daily_rewards_state
+from pyclashbot.bot.daily_challenge_collection import collect_daily_rewards_state, check_if_rewards_collected
 from pyclashbot.memu.client import click
 from pyclashbot.memu.docker import start_memu_dock_mode
 from pyclashbot.bot.season_shop_offers import collect_season_shop_offers_state
 
 mode_used_in_1v1 = None
-
+saved_date = datetime.now().date()
+shop_buy_attempts_today = 0
 
 def state_tree(
     vm_index,
@@ -44,6 +47,8 @@ def state_tree(
 ) -> str:
     """method to handle and loop between the various states of the bot"""
     global mode_used_in_1v1
+    global saved_date
+    global shop_buy_attempts_today
     start_time = time.time()
     logger.log(f'Set the current state to "{state}"')
     logger.set_current_state(state)
@@ -352,6 +357,11 @@ def state_tree(
     if state == "shop_buy":  # --> bannerbox
         next_state = "bannerbox"
 
+        current_date = datetime.now().date()
+        if saved_date != current_date:
+            shop_buy_attempts_today = 0
+            saved_date = current_date
+
         # if job not selected, return next state
         if (
             not job_list["free_offer_user_toggle"]
@@ -365,6 +375,12 @@ def state_tree(
             logger.log("Free shop_buy isn't ready")
             return next_state
 
+        if shop_buy_attempts_today >= 5:
+            logger.log("Shop buy attempts today exceeded 5. Skipping this state")
+            return next_state
+        
+        # increment attempts
+        shop_buy_attempts_today += 1
         # return output of this state
         return buy_shop_offers_state(
             vm_index,
@@ -454,16 +470,35 @@ def state_tree(
 
     if state == "start_fight":  # --> 1v1_fight, war
         next_state = "war"
+        daily_reward_collected = False
+        full_chests = False
 
-        if job_list["skip_fight_if_full_chests_user_toggle"] and (get_chest_statuses(vm_index).count("available") == 4):
-            logger.change_status("All chests are available. Skipping fight states")
+        # Check daily rewards
+        if job_list["daily_rewards_user_toggle"]:
+            if check_if_rewards_collected(vm_index):
+                logger.change_status("Daily rewards are already collected")
+                daily_reward_collected = True
+            else:
+                logger.change_status("Daily rewards are not collected. Proceeding with fight states")
+
+        # Check chests status
+        if job_list["skip_fight_if_full_chests_user_toggle"]:
+            if get_chest_statuses(vm_index).count("available") == 4:
+                logger.change_status("All chests are available")
+                full_chests = True
+            else:
+                logger.change_status("Not all chests are available. Proceeding with fight states")
+
+        # Final decision based on daily rewards and chests status
+        if daily_reward_collected and full_chests:
+            logger.change_status("Skipping fight states due to full chests and collected daily rewards")
             return next_state
-        
+            
         mode2toggle = {
             "2v2": job_list["2v2_battle_user_toggle"],
             "trophy_road": job_list["trophy_road_1v1_battle_user_toggle"],
             "path_of_legends": job_list["path_of_legends_1v1_battle_user_toggle"],
-            "queens_journey": job_list["goblin_queens_journey_1v1_battle_user_toggle"],
+            "queens_journey": job_list["goblin_queens_journey_1v1_battle_user_toggle"], # classic 1v1
         }
 
         for mode, toggle in mode2toggle.items():
@@ -527,7 +562,7 @@ def state_tree(
         )
 
     if state == "war":  # --> account_switch
-        next_state = "account_switch"
+        next_state = "spectate"
 
         # if job not selected, return next state
         if not job_list["war_user_toggle"]:
@@ -541,6 +576,16 @@ def state_tree(
 
         # return output of this state
         return war_state(vm_index, logger, next_state)
+    
+    if state == "spectate":  # --> account_switch
+        next_state = "account_switch"
+
+        # if job not selected, return next state
+        if not job_list["spectate_user_toggle"]:
+            logger.log("Spectate job isn't toggled. Skipping this state")
+            return next_state
+        
+        return spectate_state(vm_index, logger, next_state)
 
     logger.error("Failure in state tree")
     return "fail"
@@ -550,6 +595,7 @@ def state_tree_tester(vm_index):
     state = "account_switch"
     job_list = {
         # job toggles
+        "spectate_user_toggle": False,
         "open_battlepass_user_toggle": False,
         "open_chests_user_toggle": False,
         "request_user_toggle": False,

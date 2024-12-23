@@ -74,6 +74,7 @@ def open_chests_state(vm_index: int, logger: Logger, next_state: str) -> str:
     logger.change_status(status="Opening chests...")
     # check which chests are available
     statuses = get_chest_statuses(vm_index)  # available/unavailable
+
     chest_index = 0
     for status in statuses:
         start_time = time.time()
@@ -116,16 +117,15 @@ def get_chest_statuses(vm_index):
     ]
 
     colors = [
-        [94, 51, 16],
-        [20, 64, 9],
-        [101, 35, 62]
+        [94, 52, 16],
+        [101, 34, 61]
     ]
 
     statuses = []
     for pixel in pixels:
         status = "available"
         for color in colors:
-            if pixel_is_equal(pixel, color, tol=10):
+            if pixel_is_equal(pixel, color, tol=15):
                 status = "unavailable"
                 break
         statuses.append(status)
@@ -159,7 +159,7 @@ def open_chest(vm_index, logger: Logger, chest_index) -> Literal["restart", "goo
     coord = chest_coords[chest_index]
     click(vm_index, coord[0], coord[1])
     time.sleep(3)
-    
+
     # if its unlockable, unlock it
     if check_if_chest_is_unlockable(vm_index):
         logger.add_chest_unlocked()
@@ -172,7 +172,6 @@ def open_chest(vm_index, logger: Logger, chest_index) -> Literal["restart", "goo
         logger.change_status("This chest is queueable!")
         click(vm_index, QUEUE_CHEST_BUTTON_COORD[0], QUEUE_CHEST_BUTTON_COORD[1])
         time.sleep(1)
-
 
     # click deadspace until clash main reappears
     deadspace_clicking_start_time = time.time()
@@ -218,10 +217,10 @@ def check_if_can_queue_chest(vm_index):
             16,
             8,
         ],
-        (255, 188, 41),
+        (255, 190, 43),
     ):
         return False
-    if not region_is_color(vm_index, [342, 354, 12, 16], (255, 188, 43)):
+    if not region_is_color(vm_index, [345, 356, 8, 16], (255, 190, 43)):
         return False
     return True
 

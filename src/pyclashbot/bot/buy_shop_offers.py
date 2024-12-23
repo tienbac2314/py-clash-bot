@@ -94,6 +94,11 @@ def buy_shop_offers_main(
         scroll_down_slowly_in_shop_page(vm_index)
         time.sleep(1)
 
+        if time.time() - start_time > 20:
+            # click the shop page button to get to gold offers
+            click(vm_index, 49, 584)
+            time.sleep(3)
+
         if gold_buy_toggle or free_offers_toggle:
             while (
                 buy_offers_from_this_shop_page(
@@ -144,7 +149,7 @@ def search_for_free_purchases(vm_index):
         screenshot(vm_index),
         folder_name,
         names,
-        0.9,
+        0.88,
     )
     coord = get_first_location(locations)
     if coord is None:
@@ -162,7 +167,7 @@ def search_for_gold_purchases(vm_index):
         screenshot(vm_index),
         folder_name,
         names,
-        0.9,
+        0.88,
     )
     coord = get_first_location(locations)
     if coord is None:

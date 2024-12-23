@@ -134,7 +134,7 @@ battle_stats_titles: list[list[sg.Text]] = [
         sg.Text("Trophy Road Battles: "),
     ],
     [
-        sg.Text("Goblin Queen Fights: "),
+        sg.Text("1v1 Fights: "),
     ],
     [
         sg.Text("2v2 Fights: "),
