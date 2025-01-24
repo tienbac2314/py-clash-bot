@@ -84,20 +84,23 @@ def buy_shop_offers_main(
     start_time = time.time()
     done_buying = False
     logger.change_status("Starting to buy offers")
+    scroll_time = 0
     while 1 and done_buying is False:
         if time.time() - start_time > SHOP_BUY_TIMEOUT:
             break
+        
+        # get to daily deal section
+        if scroll_time % 8 == 0:
+            # click the shop page button to get to gold offers
+            click(vm_index, 49, 584)
+            time.sleep(2)
 
         # scroll a little
         logger.change_status("Searching for offers to buy")
-        print("Time taken in shop: ", str(time.time() - start_time)[:5])
+        # print("Time taken in shop: ", str(time.time() - start_time)[:5])
         scroll_down_slowly_in_shop_page(vm_index)
+        scroll_time += 1
         time.sleep(1)
-
-        if time.time() - start_time > 20:
-            # click the shop page button to get to gold offers
-            click(vm_index, 49, 584)
-            time.sleep(3)
 
         if gold_buy_toggle or free_offers_toggle:
             while (
@@ -108,6 +111,7 @@ def buy_shop_offers_main(
                 and done_buying is False
             ):
                 purchase_total += 1
+                scroll_time = 0
                 logger.change_status("Bought an offer from the shop!")
                 time.sleep(2)
                 start_time = time.time()

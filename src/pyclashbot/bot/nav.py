@@ -497,23 +497,13 @@ def get_to_clan_tab_from_clash_main(
         # handle daily defenses rank page
         handle_war_popup_pages(vm_index, logger)
 
-        if random.randint(0, 1) == 1:
-            if random.randint(1, 3) == 1:
-                scroll_up(vm_index)
-                scroll_down(vm_index)
-                time.sleep(2)
-                continue
-
-        else:
-            if random.randint(1, 3) == 1:
-                click(
-                    vm_index,
-                    CLAN_TAB_BUTTON_COORDS_FROM_MAIN[0],
-                    CLAN_TAB_BUTTON_COORDS_FROM_MAIN[1],
-                )
-                time.sleep(2)
-                continue
-        time.sleep(1)
+        click(
+            vm_index,
+            CLAN_TAB_BUTTON_COORDS_FROM_MAIN[0],
+            CLAN_TAB_BUTTON_COORDS_FROM_MAIN[1],
+        )
+        time.sleep(3)
+        continue
 
     # if here, then done
     logger.log("Made it to the clan page from clash main")

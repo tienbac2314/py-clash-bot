@@ -470,27 +470,28 @@ def state_tree(
 
     if state == "start_fight":  # --> 1v1_fight, war
         next_state = "war"
-        daily_reward_collected = False
-        full_chests = False
-
-        # Check daily rewards
-        if job_list["daily_rewards_user_toggle"]:
-            if check_if_rewards_collected(vm_index):
-                logger.change_status("Daily rewards are already collected")
-                daily_reward_collected = True
-            else:
-                logger.change_status("Daily rewards are not collected. Proceeding with fight states")
+        skip_state = False
 
         # Check chests status
         if job_list["skip_fight_if_full_chests_user_toggle"]:
             if get_chest_statuses(vm_index).count("available") == 4:
                 logger.change_status("All chests are available")
-                full_chests = True
+                skip_state = True
             else:
                 logger.change_status("Not all chests are available. Proceeding with fight states")
 
+        # Check daily rewards
+        if job_list["daily_rewards_user_toggle"]:
+            if check_if_rewards_collected(vm_index) is True:
+                logger.change_status("Daily rewards are already collected")
+            elif check_if_rewards_collected(vm_index) is False: # play to collect daily rewards
+                logger.change_status("Daily rewards are not collected. Proceeding with fight states")
+                skip_state = False
+            elif check_if_rewards_collected(vm_index) == "restart": # something went wrong
+                logger.change_status("Error while checking daily rewards ?")
+
         # Final decision based on daily rewards and chests status
-        if daily_reward_collected and full_chests:
+        if skip_state:
             logger.change_status("Skipping fight states due to full chests and collected daily rewards")
             return next_state
             

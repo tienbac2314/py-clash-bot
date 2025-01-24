@@ -564,9 +564,14 @@ def wait_for_elixer(
             return "restart"
         
         if check_if_in_battle_with_iar(battle_iar) == "None":
-            if check_if_in_battle(vm_index) == "None":
-                logger.change_status(status="Not in battle, stopping waiting for elixer.")
-                return "no battle"
+            # check again 5 times to make sure (sometimes it falsely returns None)
+            for attempt in range(5):
+                time.sleep(0.2)
+                if check_if_in_battle(vm_index) == "None":
+                    if attempt == 4:
+                        return "no battle"
+                else:
+                    break
 
     logger.change_status(
         f"Took {str(time.time() - start_time)[:4]}s for {random_elixer_wait} elixer."
@@ -948,7 +953,7 @@ def _2v2_fight_loop(vm_index: int, logger: Logger):
         logger.change_status(f"Made a play in {str(time.time() - play_start_time)[:4]}s")
 
     logger.change_status("End of the 2v2 fight!")
-    time.sleep(2.13)
+    time.sleep(1)
     cards_played = logger.get_cards_played()
     logger.change_status(f"Played ~{cards_played - prev_cards_played} cards this fight")
 
@@ -1012,7 +1017,7 @@ def _1v1_fight_loop(vm_index, logger: Logger) -> Literal["restart", "good"]:
         logger.change_status(f"Made a play in {str(time.time() - play_start_time)[:4]}s")
 
     logger.change_status("End of the 1v1 fight!")
-    time.sleep(2.13)
+    time.sleep(1)
     cards_played = logger.get_cards_played()
     logger.change_status(f"Played ~{cards_played - prev_cards_played} cards this fight")
 
@@ -1075,17 +1080,13 @@ def spectate_state(
     click(vm_index, 146, 110) # click friend tab
 
     logger.change_status("Waiting for spectate button to appear")
-    clicked = False
     while 1:
         logger.change_status("Checking for spectate button...")
         if check_line_for_color(vm_index, x_1=54, y_1=182, x_2=90, y_2=217, color=(226, 5, 21)):
             logger.change_status("Found and clicked spectate button!")
             click(vm_index, 72, 200)
-            clicked = True
-        if clicked:
-            if (check_if_in_spectate_tab(vm_index) and check_line_for_color(vm_index, x_1=54, y_1=182, x_2=90, y_2=217, color=(226, 5, 21))):
-                clicked = False
-            else:
+            time.sleep(0.5)
+            if not check_line_for_color(vm_index, x_1=54, y_1=182, x_2=90, y_2=217, color=(226, 5, 21)):
                 break
 
     logger.change_status("Spectating a fight...")

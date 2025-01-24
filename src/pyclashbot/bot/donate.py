@@ -275,7 +275,7 @@ def find_donate_buttons(vm_index):
             left = 238
             right = 375
             top = 80
-            bottom = 475
+            bottom = 500
 
             image = screenshot(vm_index)
 
@@ -293,11 +293,24 @@ def find_donate_buttons(vm_index):
                 continue
 
             coord = [coord[0] + region[0], coord[1] + region[1]]
+            # print(f"Found donate button at x: {coord[0]}, y: {coord[1]}")
 
-            # adjust coord to make it more central to the icon
-            coord = [coord[0] + 37, coord[1] + 7]
+            # filter & adjust coord to make it more central to the icon
+            iar = screenshot(vm_index)
+            found = False
+            for x in range(coord[0], coord[0] + 65):
+                if found:
+                    break
+                for y in range(coord[1], coord[1] + 23):
+                    if pixel_is_equal(iar[y, x], [255, 255, 255], tol=30):
+                        coord = [x, y]
+                        found = True
+                        break
 
-            coords.append(coord)
+            if found:
+                coords.append(coord)
+                print(f"Found fixed coord donate button at x: {coord[0]}, y: {coord[1]}")
+
         except:
             pass
 
@@ -315,7 +328,7 @@ def find_donate_button_for_free(image, vm_index, region):
         x = coord[1] + region[0]
         y = coord[0] + region[1]
         # print(f"left: {x-200} right: {x-80} top:{y-30}, bottom: {y+30}")
-        free_region = [x - 200, y - 30, 120, 60]
+        free_region = [x - 230, y - 60, 150, 90]
         free_image = screenshot(vm_index)
         free_image = crop_image(free_image, free_region)
         
@@ -327,7 +340,7 @@ def find_donate_button_for_free(image, vm_index, region):
             free_image,
             folder,
             names,
-            tolerance=0.88,
+            tolerance=0.85,
         )
 
         free_coord = get_first_location(locations)
@@ -352,7 +365,7 @@ def find_donate_button(image):
         image,
         folder,
         names,
-        tolerance=0.88,
+        tolerance=0.85,
     )
 
     coord = get_first_location(locations)

@@ -3073,7 +3073,7 @@ def switch_side():
                         if numpy.all(right_diff <= 5):
                             valid_pixels += 1
 
-                if valid_pixels >= 8:
+                if valid_pixels >= 7:
                     if coord[0] > 240: # If enemies are on our side
                         if i == 0:
                             return 34000, "left", True

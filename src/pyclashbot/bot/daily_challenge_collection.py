@@ -1,8 +1,9 @@
 from pyclashbot.bot.nav import check_if_on_clash_main_menu
-from pyclashbot.detection.image_rec import pixel_is_equal
+from pyclashbot.detection.image_rec import pixel_is_equal, check_region_for_color
 from pyclashbot.utils.logger import Logger
 import numpy
 from pyclashbot.memu.client import save_screenshot, screenshot, click
+
 from datetime import datetime
 import time
 
@@ -20,21 +21,15 @@ def collect_daily_rewards_state(vm_index, logger, next_state):
     return next_state
 
 
-def check_if_rewards_collected(vm_index) -> bool:
+def check_if_rewards_collected(vm_index):
 
     if not check_if_on_clash_main_menu(vm_index):
-        return False
-    
-    iar = screenshot(vm_index)
-    checkmark_pixels = [
-        (43, 212, [61, 238, 98]),
-    ]
+        return "restart"
 
     # Check each specified pixel for the checkmark
-    for x, y, expected_color in checkmark_pixels:
-        # If a pixel does not match, the checkmark is not present
-        if not pixel_is_equal(iar[y][x], expected_color, tol=35):
-            return False
+    region = [34, 201, 25, 20]
+    if check_region_for_color(vm_index, region, (100, 239, 62)) is False:
+        return False
 
     # If all pixels match, the checkmark is present
     return True
@@ -74,9 +69,12 @@ def collect_challenge_rewards(vm_index, logger, rewards) -> bool:
                 click(vm_index, 10, 450, clicks=5, interval=0.33)
             else:  # For "lucky drop" rewards
                 click(vm_index, 15, 450, clicks=8, interval=0.25)
-                time.sleep(5)
                 current_date = datetime.now().strftime("%d_%m_%Y")
-                save_screenshot(vm_index, f"LuckyDrop_{i + 1}_{current_date}")
+                time.sleep(4)
+                for _ in range(3):
+                    time.sleep(1)
+                    save_screenshot(vm_index, f"LuckyDrop_{i + 1}_{current_date}")
+                logger.change_status(f"Saved screenshot of lucky drop reward {i + 1}")
                 click(vm_index, 15, 450, clicks=5, interval=0.33)
                 
             # Reopen the rewards menu only if necessary
