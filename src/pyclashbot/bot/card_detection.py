@@ -44,13 +44,17 @@ PLAY_COORDS = {
         "left": [(69, 442), (158, 444), (166, 394), (102, 451)],
         "right": [(247, 396), (264, 440), (343, 442), (312, 456)],
     },
-    "long_range": {
+    "troop_spawner": {
         "left": [(70, 463), (184, 398), (166, 394), (211, 471)],
         "right": [(247, 396), (264, 440), (343, 463), (191, 473)],
     },
     "princess": {
         "left": [(235, 415), (240, 400), (211, 471), (220, 402)],
         "right": [(185, 415), (184, 398), (191, 473), (166, 394)],
+    },
+    "long_range": {
+        "left": [(70, 463), (75, 404), (220, 386), (191, 471), (220, 402)],
+        "right": [(343, 463), (335, 404), (184, 386), (211, 473), (166, 394)],
     },
     "suspicious_bush": {
         "left": [(335, 288)],
@@ -112,12 +116,17 @@ PLAY_COORDS = {
 }
 
 CARD_GROUPS: dict[str, list[str]] = {
-    "long_range": [
+    "troop_spawner": [
         "witch",
         "night_witch",
     ],
     "princess": [
         "princess",
+    ],
+    "long_range": [
+        "dart_goblin",
+        "evo_dart_goblin",
+        "magic_archer",
     ],
     "suspicious_bush": [
         "suspicious_bush",
@@ -174,8 +183,6 @@ CARD_GROUPS: dict[str, list[str]] = {
     "spawner": [
         "wizard",
         "flying_machine",
-        "magic_archer",
-        "dart_goblin",
         "archers",
         "evo_fire_cracker",
         "fire_cracker",
@@ -188,6 +195,7 @@ CARD_GROUPS: dict[str, list[str]] = {
 
 # card color data
 card_color_data = {
+    "evo_dart_goblin": [{'Red': 0, 'Orange': 75, 'Yellow': 1, 'Green': 66, 'Blue': 0, 'Indigo': 39, 'Violet': 8, 'Cyan': 0, 'Magenta': 18, 'Pink': 73, 'Turquoise': 104, 'Lime': 0, 'Purple': 30, 'Brown': 27, 'Teal': 419, 'Maroon': 31}, {'Red': 0, 'Orange': 12, 'Yellow': 14, 'Green': 10, 'Blue': 0, 'Indigo': 59, 'Violet': 12, 'Cyan': 0, 'Magenta': 13, 'Pink': 198, 'Turquoise': 224, 'Lime': 1, 'Purple': 42, 'Brown': 174, 'Teal': 124, 'Maroon': 8}, {'Red': 0, 'Orange': 32, 'Yellow': 3, 'Green': 56, 'Blue': 0, 'Indigo': 56, 'Violet': 17, 'Cyan': 0, 'Magenta': 37, 'Pink': 27, 'Turquoise': 114, 'Lime': 7, 'Purple': 11, 'Brown': 26, 'Teal': 503, 'Maroon': 2}, {'Red': 1, 'Orange': 10, 'Yellow': 17, 'Green': 88, 'Blue': 0, 'Indigo': 160, 'Violet': 8, 'Cyan': 0, 'Magenta': 44, 'Pink': 72, 'Turquoise': 183, 'Lime': 0, 'Purple': 26, 'Brown': 71, 'Teal': 184, 'Maroon': 27}],
     "valkyrie": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 10, 'Blue': 112, 'Indigo': 284, 'Violet': 1, 'Cyan': 0, 'Magenta': 0, 'Pink': 95, 'Turquoise': 212, 'Lime': 0, 'Purple': 51, 'Brown': 31, 'Teal': 94, 'Maroon': 1}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 7, 'Blue': 65, 'Indigo': 385, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 95, 'Turquoise': 157, 'Lime': 0, 'Purple': 4, 'Brown': 31, 'Teal': 91, 'Maroon': 56}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 8, 'Blue': 19, 'Indigo': 519, 'Violet': 18, 'Cyan': 0, 'Magenta': 29, 'Pink': 21, 'Turquoise': 57, 'Lime': 0, 'Purple': 27, 'Brown': 26, 'Teal': 161, 'Maroon': 6}, {'Red': 0, 'Orange': 5, 'Yellow': 0, 'Green': 35, 'Blue': 39, 'Indigo': 203, 'Violet': 17, 'Cyan': 0, 'Magenta': 44, 'Pink': 118, 'Turquoise': 269, 'Lime': 0, 'Purple': 6, 'Brown': 6, 'Teal': 146, 'Maroon': 3}],
     "suspicious_bush": [{'Red': 0, 'Orange': 98, 'Yellow': 0, 'Green': 20, 'Blue': 0, 'Indigo': 83, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 277, 'Turquoise': 29, 'Lime': 0, 'Purple': 0, 'Brown': 328, 'Teal': 53, 'Maroon': 3}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 8, 'Blue': 0, 'Indigo': 12, 'Violet': 0, 'Cyan': 0, 'Magenta': 0, 'Pink': 152, 'Turquoise': 37, 'Lime': 0, 'Purple': 1, 'Brown': 288, 'Teal': 34, 'Maroon': 359}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 434, 'Blue': 0, 'Indigo': 28, 'Violet': 12, 'Cyan': 0, 'Magenta': 25, 'Pink': 82, 'Turquoise': 111, 'Lime': 0, 'Purple': 7, 'Brown': 51, 'Teal': 131, 'Maroon': 10}, {'Red': 1, 'Orange': 0, 'Yellow': 0, 'Green': 272, 'Blue': 0, 'Indigo': 26, 'Violet': 3, 'Cyan': 0, 'Magenta': 41, 'Pink': 77, 'Turquoise': 228, 'Lime': 2, 'Purple': 15, 'Brown': 36, 'Teal': 146, 'Maroon': 44}],
     "evo_goblin_barrel": [{'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 94, 'Blue': 0, 'Indigo': 41, 'Violet': 21, 'Cyan': 0, 'Magenta': 54, 'Pink': 210, 'Turquoise': 212, 'Lime': 2, 'Purple': 33, 'Brown': 9, 'Teal': 204, 'Maroon': 11}, {'Red': 0, 'Orange': 2, 'Yellow': 0, 'Green': 46, 'Blue': 0, 'Indigo': 12, 'Violet': 42, 'Cyan': 0, 'Magenta': 0, 'Pink': 319, 'Turquoise': 133, 'Lime': 9, 'Purple': 118, 'Brown': 45, 'Teal': 160, 'Maroon': 5}, {'Red': 0, 'Orange': 0, 'Yellow': 0, 'Green': 41, 'Blue': 0, 'Indigo': 128, 'Violet': 22, 'Cyan': 0, 'Magenta': 36, 'Pink': 248, 'Turquoise': 114, 'Lime': 24, 'Purple': 36, 'Brown': 39, 'Teal': 189, 'Maroon': 14}, {'Red': 0, 'Orange': 11, 'Yellow': 0, 'Green': 7, 'Blue': 0, 'Indigo': 54, 'Violet': 24, 'Cyan': 0, 'Magenta': 45, 'Pink': 138, 'Turquoise': 283, 'Lime': 0, 'Purple': 24, 'Brown': 44, 'Teal': 253, 'Maroon': 8}],

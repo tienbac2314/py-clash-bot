@@ -50,7 +50,9 @@ def click(vm_index, x_coord, y_coord, clicks=1, interval=0.1):
             time.sleep(interval)
 
 
-
+def hold_click(vm_index, x_coord, y_coord, duration = 1000):
+    send_hold_click(vm_index, x_coord, y_coord, duration)
+    
 def scroll(vm_index, start_x, start_y, end_x, end_y):
     send_swipe(vm_index, start_x, start_y, end_x, end_y)
 
@@ -108,6 +110,14 @@ def scroll_down_slowly_in_shop_page(vm_index):
     # click deadspace to stop the scroll
     click(vm_index, 10, 200)
 
+def scroll_to_centralize_offers_in_shop_page(vm_index):
+    """Method for scrolling down even faster when interacting with a
+    scrollable menu using the left side of the screen"""
+    send_swipe(vm_index, 66, 400, 66, 300)
+
+    # click deadspace to stop the scroll
+    click(vm_index, 10, 200)
+
 
 def send_swipe(
     vm_index: int, x_coord1: int, y_coord1: int, x_coord2: int, y_coord2: int
@@ -149,6 +159,19 @@ def send_click(vm_index, x_coord, y_coord):
         command=f"shell input tap {x_coord} {y_coord}",
     )
 
+def send_hold_click(vm_index, x_coord, y_coord, duration = 1000):
+    """Method for sending a hold click command to the given vm
+
+    Args:
+        vm_index (int): Index of the vm to send the command to
+        x_coord (int): X coordinate of the hold click
+        y_coord (int): Y coordinate of the hold click
+    """
+
+    pmc.send_adb_command_vm(
+        vm_index=vm_index,
+        command=f"shell input swipe {x_coord} {y_coord} {x_coord} {y_coord} {duration}",
+    )
 
 def send_text(vm_index, text: str):
     """Method for sending a text command to the given vm

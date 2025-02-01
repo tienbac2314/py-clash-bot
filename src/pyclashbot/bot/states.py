@@ -1,6 +1,6 @@
 """time module for timing functions and controling pacing"""
 
-from datetime import datetime
+import datetime
 import time
 from pyclashbot.bot.account_switching import switch_accounts
 from pyclashbot.bot.bannerbox import collect_bannerbox_rewards_state
@@ -36,8 +36,9 @@ from pyclashbot.memu.docker import start_memu_dock_mode
 from pyclashbot.bot.season_shop_offers import collect_season_shop_offers_state
 
 mode_used_in_1v1 = None
-saved_date = datetime.now().date()
+saved_date = datetime.datetime.now().date()
 shop_buy_attempts_today = 0
+war_battle_attempts_today = 0
 
 def state_tree(
     vm_index,
@@ -49,6 +50,7 @@ def state_tree(
     global mode_used_in_1v1
     global saved_date
     global shop_buy_attempts_today
+    global war_battle_attempts_today
     start_time = time.time()
     logger.log(f'Set the current state to "{state}"')
     logger.set_current_state(state)
@@ -357,7 +359,7 @@ def state_tree(
     if state == "shop_buy":  # --> bannerbox
         next_state = "bannerbox"
 
-        current_date = datetime.now().date()
+        current_date = datetime.datetime.now().date()
         if saved_date != current_date:
             shop_buy_attempts_today = 0
             saved_date = current_date
@@ -575,6 +577,34 @@ def state_tree(
             logger.log("War job isn't ready. Skipping this state")
             return next_state
 
+        # if war battle attempts today exceeded 15, skip this state
+        if war_battle_attempts_today >= 15:
+            logger.log("War battle attempts today exceeded 15. Skipping this state")
+            return next_state
+        
+        # Get the current time
+        now = datetime.datetime.now()
+        current_date = now.date()
+        current_day = now.weekday()  # Monday is 0 and Sunday is 6
+        current_time = now.time()
+
+        # Define the time range
+        thursday_6pm = datetime.time(18, 0)
+        monday_4pm = datetime.time(16, 0)
+
+        if saved_date != current_date and current_time >= datetime.time(18, 0):
+            war_battle_attempts_today = 0
+            saved_date = current_date
+
+        # Check if the current time is not between Thursday 6 PM and Monday 4 PM
+        if not ((current_day == 3 and current_time >= thursday_6pm) or
+                (current_day > 3 and current_day < 7) or
+                (current_day == 0 and current_time < monday_4pm) or
+                (war_battle_attempts_today < 4)):
+            logger.log("Not battle day yet. Skipping this state")
+            return next_state
+        
+        war_battle_attempts_today += 1
         # return output of this state
         return war_state(vm_index, logger, next_state)
     

@@ -21,7 +21,7 @@ from pyclashbot.detection.image_rec import (
     crop_image,
     condense_coordinates,
 )
-from pyclashbot.memu.client import screenshot, click, scroll_up
+from pyclashbot.memu.client import screenshot, click, scroll_up, hold_click
 from pyclashbot.utils.logger import Logger
 from pyclashbot.bot.nav import get_to_profile_page, wait_for_clash_main_menu
 
@@ -257,7 +257,7 @@ def find_and_click_donates(vm_index, logger):
                 return "restart"
 
             # do clicking, increment counter, toggle found_donates
-            click(vm_index, coord[0], coord[1])
+            hold_click(vm_index, coord[0], coord[1], 3000)
             logger.change_status("Donated a card!")
             found_donates = True
             logger.add_donate()

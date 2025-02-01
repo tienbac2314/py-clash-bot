@@ -85,20 +85,25 @@ def war_state(vm_index: int, logger: Logger, next_state: str):
 
         return "restart"
 
-    # check if in a clan
-    logger.change_status(status="Making sure in a clan before war battle")
-    in_a_clan_check = war_state_check_if_in_a_clan(vm_index, logger)
+    # if logger says we're not in a clan, check if we are in a clan
+    if logger.in_a_clan is False:
+        logger.change_status("Checking if in a clan before war attack")
+        in_a_clan_return = war_state_check_if_in_a_clan(vm_index, logger)
+        if in_a_clan_return == "restart":
+            logger.change_status(
+                status="Error 05708425 Failure with check_if_in_a_clan"
+            )
+            return "restart"
 
-    if in_a_clan_check == "restart":
-        logger.change_status(
-            status="Error 502835 Failure while checking if in a clan before war battle"
-        )
-        return "restart"
+        if not in_a_clan_return:
+            return next_state
+    else:
+        print(
+            f"Logger's in_a_clan value is: {logger.in_a_clan} so skipping check")
 
-    if not in_a_clan_check:
-        logger.change_status(status="Not in a clan so skipping war...")
-
-        return next_state
+    # if in a clan, update logger's in_a_clan value
+    logger.update_in_a_clan_value(True)
+    print(f"Set Logger's in_a_clan value to: {logger.in_a_clan}!")
 
     # get to clan page
     logger.change_status(status="Starting a war battle")
@@ -252,17 +257,17 @@ def do_war_battle(vm_index, logger) -> Literal["restart", "good"]:
                 status="Error 658725 Ran war fight loop too long")
             return "restart"
 
-        # click a random card
-        logger.change_status(status="Doing a random war play")
+        # # click a random card
+        # logger.change_status(status="Doing a random war play")
 
-        random_card_coord = random.choice(CARD_COORDS)
-        click(vm_index, random_card_coord[0], random_card_coord[1])
-        time.sleep(0.33)
+        # random_card_coord = random.choice(CARD_COORDS)
+        # click(vm_index, random_card_coord[0], random_card_coord[1])
+        # time.sleep(0.33)
 
-        # click a random play coord
-        random_play_coord = (random.randint(63, 205), random.randint(55, 455))
-        click(vm_index, random_play_coord[0], random_play_coord[1])
-        time.sleep(9)
+        # # click a random play coord
+        # random_play_coord = (random.randint(63, 205), random.randint(55, 455))
+        # click(vm_index, random_play_coord[0], random_play_coord[1])
+        # time.sleep(9)
 
     logger.change_status(status="Done with this war fight")
     return "good"
@@ -485,24 +490,33 @@ def check_if_on_war_page(vm_index):
     return True
 
 
-def war_state_check_if_in_a_clan(vm_index, logger: Logger):
-    """method to handle the process of cehcking if the user in in a clan"""
+def war_state_check_if_in_a_clan(
+    vm_index, logger: Logger
+) -> bool | Literal["restart"]:
+    # if not on clash main, return
+    if check_if_on_clash_main_menu(vm_index) is not True:
+        logger.change_status(status="ERROR 385462623 Not on clash main menu")
+        return "restart"
 
     # get to profile page
     if get_to_profile_page(vm_index, logger) == "restart":
         logger.change_status(
-            status="Error 90723563485 Failure with get_to_profile_page"
+            status="Error 9076092860923485 Failure with get_to_profile_page"
         )
         return "restart"
 
     # check pixels for in a clan
     in_a_clan = war_state_check_pixels_for_clan_flag(vm_index)
 
+    # print clan status
+    if not in_a_clan:
+        logger.change_status("Not in a clan, so can't request!")
+
     # click deadspace to leave
-    click(vm_index, 15, 300)
+    click(vm_index, 15, 450)
     if wait_for_clash_main_menu(vm_index, logger) is False:
         logger.change_status(
-            status="Error 872356739 Failure with wait_for_clash_main_menu"
+            status="Error 87258301758939 Failure with wait_for_clash_main_menu"
         )
         return "restart"
 
